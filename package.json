@@ -1,0 +1,44 @@
+{
+  "name": "pbz2ynab",
+  "version": "0.0.1",
+  "description": "Convert exported PBZ bank account statement to YNAB compatible format",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kronicker/pbz2ynab.git"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "release": "np"
+  },
+  "author": {
+    "name": "kronicker",
+    "url": "https://gihub.com/kronicker"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kronicker/pbz2ynab/issues"
+  },
+  "homepage": "https://github.com/kronicker/pbz2ynab#readme",
+  "dependencies": {
+    "csv-stringify": "^5.3.6",
+    "np": "^6.1.0",
+    "xlsx": "^0.15.5"
+  },
+  "devDependencies": {
+    "@extensionengine/eslint-config": "^1.2.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-semistandard": "^15.0.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-require-sort": "^1.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.2.1"
+  },
+  "files": [
+    "index.js"
+  ]
+}

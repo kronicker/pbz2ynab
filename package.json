@@ -1,6 +1,6 @@
 {
   "name": "pbz2ynab",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Convert exported PBZ bank account statement to YNAB compatible format",
   "main": "index.js",
   "repository": {

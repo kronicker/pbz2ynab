@@ -43,6 +43,7 @@
   },
   "files": [
     "cli.js",
+    "preflight.js",
     "package.json"
   ]
 }

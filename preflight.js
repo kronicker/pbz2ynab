@@ -1,8 +1,9 @@
 'use strict';
 
 const isNpx = process.env.npm_config_prefix.includes('npx');
+const isCI = JSON.parse(process.env.npm_config_argv).original.includes('ci');
 
-if (isNpx) process.exit();
+if (isNpx || isCI) process.exit();
 
 const { name } = require('./package.json');
 

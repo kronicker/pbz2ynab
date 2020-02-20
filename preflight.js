@@ -1,10 +1,20 @@
 'use strict';
 
-const isNpx = process.env.npm_config_prefix.includes('npx');
-const isCI = JSON.parse(process.env.npm_config_argv).original.includes('ci');
+const { existsSync } = require('fs');
+const path = require('path');
 
-if (isNpx || isCI) process.exit();
+const {
+  npm_config_prefix: prefix = '',
+  npm_config_argv: argv = JSON.stringify({ original: '' })
+} = process.env;
 
+const isGit = existsSync(path.join(process.cwd(), '.git/config'));
+const isNpx = prefix.includes('npx');
+const isCI = JSON.parse(argv).original.includes('ci');
+
+if (isGit || isNpx || isCI) process.exit();
+
+// eslint-disable-next-line require-sort/require-sort
 const { name } = require('./package.json');
 
 console.error(`

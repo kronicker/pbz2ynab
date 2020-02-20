@@ -2,14 +2,11 @@
 
 'use strict';
 
-const csvStringify = require('csv-stringify');
-const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
+const stringify = promisify(require('csv-stringify'));
+const writeFile = promisify(require('fs').writeFile);
 const xlsx = require('xlsx');
-
-const stringify = promisify(csvStringify);
-const writeFile = promisify(fs.writeFile);
 
 const SRC_EXT = '.xls';
 const DEST_EXT = '.csv';
@@ -21,44 +18,40 @@ const COLUMNS = [
   ['Amount', 'D']
 ];
 
-const src = process.argv[2];
-const dest = process.argv[3];
+const argv = process.argv.slice(2);
+const [src, dest] = argv;
 
-validateInput(src, dest)
+Promise.resolve()
+  .then(() => validateInput(src, dest))
   .then(() => readXls(src))
-  .then(buildRows)
+  .then(sheet => buildRows(sheet))
   .then(rows => writeCsv(rows, dest))
-  .then(() => {
-    console.log('Success!');
-    process.exit(0);
-  })
+  .then(() => console.log('Success!'))
   .catch(onError);
 
 function validateInput(src, dest) {
-  if (!src || !dest) {
-    return Promise.reject(new Error('Usage: pbz2ynab [sourceFile] [destinationFile]'));
+  if (!src && !dest) {
+    throw new Error('Usage: pbz2ynab [sourceFile] [destinationFile]');
   }
-  if (path.extname(src) !== SRC_EXT) {
-    return Promise.reject(new Error('Source file must be PBZ exported .xls file'));
+  if (!src || path.extname(src) !== SRC_EXT) {
+    throw new TypeError('Source file must be PBZ exported .xls file');
   }
-  if (path.extname(dest) !== DEST_EXT) {
-    return Promise.reject(new Error('Destination file must be .csv file'));
+  if (!dest || path.extname(dest) !== DEST_EXT) {
+    throw new TypeError('Destination file must be .csv file');
   }
-  return Promise.resolve();
 }
 
-async function readXls(file) {
-  const filePath = path.join(process.cwd(), file);
+function readXls(file) {
+  const filePath = path.resolve(process.cwd(), file);
   const workbook = xlsx.readFile(filePath);
-  const sheetName = workbook.SheetNames[0];
+  const [sheetName] = workbook.SheetNames;
   const sheet = workbook.Sheets[sheetName];
   return sheet;
 }
 
 function buildRows(sheet) {
-  const rowsCount = sheet['!rows'].length;
-  const rows = Array(rowsCount)
-    .fill()
+  const { length } = sheet['!rows'];
+  const rows = Array.from({ length })
     .slice(IGNORED_ROWS)
     .reduce((rows, _, index) => rows.concat([COLUMNS.map(([__, key]) => {
       const cellName = `${key}${index + IGNORED_ROWS}`;
@@ -69,7 +62,7 @@ function buildRows(sheet) {
 }
 
 function writeCsv(rows, file) {
-  const filePath = path.join(process.cwd(), file);
+  const filePath = path.resolve(process.cwd(), file);
   return stringify(rows, { delimiter: ',' })
     .then(csv => writeFile(filePath, csv));
 }
